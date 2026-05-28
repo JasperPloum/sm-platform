@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SparkChat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="app.css"/>
+</head>
+<body>
+
+<!-- ====== SIDEBAR ====== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="brand-small">
+            <svg viewBox="0 0 36 36" fill="none"><path d="M18 3L33 28H3L18 3Z" fill="url(#g2)"/><path d="M18 12L27 28H9L18 12Z" fill="rgba(255,255,255,0.25)"/><defs><linearGradient id="g2" x1="3" y1="28" x2="33" y2="3" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B35"/><stop offset="1" stop-color="#FF3D6E"/></linearGradient></defs></svg>
+            <span>SparkChat</span>
+        </div>
+        <button class="icon-btn" id="signOutBtn" title="Sign out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+    </div>
+
+    <!-- Current user -->
+    <div class="me-card" id="meCard">
+        <div class="avatar avatar-lg" id="myAvatar">?</div>
+        <div class="me-info">
+            <span class="me-name" id="myName">Loading…</span>
+            <span class="me-username" id="myUsername"></span>
+        </div>
+    </div>
+
+    <!-- Add friends -->
+    <div class="section-label">
+        <span>Add Friends</span>
+    </div>
+    <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by username…" autocomplete="off"/>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+
+    <!-- Friend requests -->
+    <div class="section-label collapsible" id="reqLabel">
+        <span>Requests</span>
+        <span class="badge" id="reqBadge" hidden></span>
+    </div>
+    <div id="requestsList" class="friend-list"></div>
+
+    <!-- Friends -->
+    <div class="section-label">
+        <span>Friends</span>
+    </div>
+    <div id="friendsList" class="friend-list"></div>
+
+</aside>
+
+<!-- ====== CHAT AREA ====== -->
+<main class="chat-area" id="chatArea">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+        <div class="empty-icon">
+            <svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="40" r="38" fill="rgba(255,107,53,0.07)" stroke="rgba(255,107,53,0.2)" stroke-width="1.5"/><path d="M24 40c0-8.84 7.16-16 16-16s16 7.16 16 16v2a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4v-1" stroke="url(#eg)" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="52" r="2" fill="#FF6B35"/><defs><linearGradient id="eg" x1="24" y1="40" x2="56" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#FF6B35"/><stop offset="1" stop-color="#FF3D6E"/></linearGradient></defs></svg>
+        </div>
+        <h2>Pick a conversation</h2>
+        <p>Select a friend from the sidebar or add someone new to start chatting.</p>
+    </div>
+
+    <!-- Active chat -->
+    <div class="chat-view" id="chatView" hidden>
+        <header class="chat-header">
+            <button class="icon-btn back-btn" id="backBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="avatar" id="chatAvatar"></div>
+            <div class="chat-header-info">
+                <span class="chat-name" id="chatName"></span>
+                <span class="chat-status" id="chatStatus">online</span>
+            </div>
+        </header>
+
+        <div class="messages" id="messages"></div>
+
+        <footer class="message-input-bar">
+            <textarea id="msgInput" placeholder="Send a spark…" rows="1"></textarea>
+            <button class="send-btn" id="sendBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+        </footer>
+    </div>
+
+</main>
+
+<!-- Mobile sidebar toggle -->
+<button class="fab" id="sidebarToggle">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
