@@ -88,28 +88,47 @@ function bindListeners() {
     });
 }
 
-// ── User search ────────────────────────────────────────────────
+// ── User search (username OR display name) ─────────────────────
 async function searchUsers(term) {
     const container = document.getElementById("searchResults");
     container.innerHTML = "";
     if (!term || term.length < 2) return;
 
-    const q = query(
+    const termLower = term.toLowerCase();
+
+    // Query by username prefix
+    const qUsername = query(
         collection(db, "users"),
-        where("username", ">=", term.toLowerCase()),
-        where("username", "<=", term.toLowerCase() + "\uf8ff"),
+        where("username", ">=", termLower),
+        where("username", "<=", termLower + "\uf8ff"),
         limit(6)
     );
-    const snap = await getDocs(q);
 
-    if (snap.empty) {
-        container.innerHTML = `<div class="list-empty">No users found</div>`;
+    // Query by displayName prefix (stored as-is, try both cases)
+    const qDisplay = query(
+        collection(db, "users"),
+        where("displayName", ">=", term),
+        where("displayName", "<=", term + "\uf8ff"),
+        limit(6)
+    );
+
+    const [snapA, snapB] = await Promise.all([getDocs(qUsername), getDocs(qDisplay)]);
+
+    // Merge results, deduplicate by uid
+    const seen = new Map();
+    for (const d of [...snapA.docs, ...snapB.docs]) {
+        const data = d.data();
+        if (data.uid !== currentUser.uid && !seen.has(data.uid)) {
+            seen.set(data.uid, data);
+        }
+    }
+
+    if (seen.size === 0) {
+        container.innerHTML = `<div class="list-empty">No users found — check the exact username</div>`;
         return;
     }
 
-    for (const d of snap.docs) {
-        const data = d.data();
-        if (data.uid === currentUser.uid) continue;
+    for (const data of seen.values()) {
         container.appendChild(await buildSearchItem(data));
     }
 }
