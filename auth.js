@@ -86,16 +86,26 @@ function friendlyError(code) {
 async function ensureUserDoc(user, extraData = {}) {
     const ref  = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
+    const displayName = extraData.displayName || user.displayName || user.email.split("@")[0];
+    const username    = (extraData.username || user.email.split("@")[0]).toLowerCase().replace(/\s+/g, "_");
+
     if (!snap.exists()) {
         await setDoc(ref, {
             uid:         user.uid,
             email:       user.email,
-            displayName: user.displayName || extraData.displayName || user.email.split("@")[0],
-            username:    (extraData.username || user.email.split("@")[0]).toLowerCase().replace(/\s+/g, "_"),
+            displayName,
+            username,
+            searchName:  displayName.toLowerCase(),   // for case-insensitive search
             photoURL:    user.photoURL || null,
             friends:     [],
             createdAt:   serverTimestamp()
         });
+    } else {
+        // Patch existing docs that are missing searchName
+        const data = snap.data();
+        if (!data.searchName) {
+            await setDoc(ref, { searchName: (data.displayName || "").toLowerCase() }, { merge: true });
+        }
     }
 }
 

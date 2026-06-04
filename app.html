@@ -20,41 +20,73 @@
         <button class="icon-btn" id="signOutBtn" title="Sign out">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
+        <button class="icon-btn danger-btn" id="deleteAccountBtn" title="Delete account">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
     </div>
 
-    <!-- Current user -->
-    <div class="me-card" id="meCard">
-        <div class="avatar avatar-lg" id="myAvatar">?</div>
-        <div class="me-info">
-            <span class="me-name" id="myName">Loading…</span>
-            <span class="me-username" id="myUsername"></span>
+    <!-- Delete account modal -->
+    <div class="modal-overlay" id="deleteModal" hidden>
+        <div class="modal">
+            <div class="modal-icon">🗑️</div>
+            <h3>Delete Account</h3>
+            <p>This will permanently delete your account, messages and all data. This <strong>cannot</strong> be undone.</p>
+            <p class="modal-reauth-note" id="reauthNote" hidden>For security, please re-enter your password to confirm.</p>
+            <input type="password" id="deletePassword" placeholder="Enter your password" hidden/>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" id="deleteCancelBtn">Cancel</button>
+                <button class="btn-modal-confirm" id="deleteConfirmBtn">Delete My Account</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Add friends -->
-    <div class="section-label">
-        <span>Add Friends</span>
-    </div>
-    <div class="search-wrap">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search by username…" autocomplete="off"/>
-    </div>
-    <div id="searchResults" class="search-results"></div>
+        <!-- Current user -->
+        <div class="me-card" id="meCard">
+            <div class="avatar avatar-lg" id="myAvatar">?</div>
+            <div class="me-info">
+                <span class="me-name" id="myName">Loading…</span>
+                <span class="me-username" id="myUsername"></span>
+            </div>
+        </div>
 
-    <!-- Friend requests -->
-    <div class="section-label collapsible" id="reqLabel">
-        <span>Requests</span>
-        <span class="badge" id="reqBadge" hidden></span>
-    </div>
-    <div id="requestsList" class="friend-list"></div>
+        <!-- Add friends -->
+        <div class="section-label">
+            <span>Add Friends</span>
+        </div>
+        <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Search by username…" autocomplete="off"/>
+        </div>
+        <div id="searchResults" class="search-results"></div>
 
-    <!-- Friends -->
-    <div class="section-label">
-        <span>Friends</span>
-    </div>
-    <div id="friendsList" class="friend-list"></div>
+        <!-- Friend requests -->
+        <div class="section-label collapsible" id="reqLabel">
+            <span>Requests</span>
+            <span class="badge" id="reqBadge" hidden></span>
+        </div>
+        <div id="requestsList" class="friend-list"></div>
+
+        <!-- Friends -->
+        <div class="section-label">
+            <span>Friends</span>
+        </div>
+        <div id="friendsList" class="friend-list"></div>
 
 </aside>
+
+<!-- Delete account modal -->
+<div class="modal-overlay" id="deleteModal" hidden>
+    <div class="modal">
+        <div class="modal-icon">&#x1F5D1;&#xFE0F;</div>
+        <h3>Delete Account</h3>
+        <p>This will permanently delete your account and all your data. This <strong>cannot</strong> be undone.</p>
+        <p class="modal-reauth-note" id="reauthNote" hidden>Re-enter your password to confirm.</p>
+        <input type="password" id="deletePassword" placeholder="Enter your password" />
+        <div class="modal-actions">
+            <button class="btn-modal-cancel" id="deleteCancelBtn">Cancel</button>
+            <button class="btn-modal-confirm" id="deleteConfirmBtn">Delete My Account</button>
+        </div>
+    </div>
+</div>
 
 <!-- ====== CHAT AREA ====== -->
 <main class="chat-area" id="chatArea">

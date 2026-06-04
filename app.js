@@ -82,13 +82,26 @@ function bindListeners() {
         if (unsubMessages) { unsubMessages(); unsubMessages = null; }
     });
 
+
+    // Delete account
+    document.getElementById("deleteAccountBtn").addEventListener("click", () => {
+        document.getElementById("deleteModal").hidden = false;
+        document.getElementById("reauthNote").hidden  = true;
+        document.getElementById("deletePassword").hidden = false;
+        document.getElementById("deletePassword").value  = "";
+    });
+    document.getElementById("deleteCancelBtn").addEventListener("click", () => {
+        document.getElementById("deleteModal").hidden = true;
+    });
+    document.getElementById("deleteConfirmBtn").addEventListener("click", deleteAccount);
+
     // Sidebar toggle (mobile)
     document.getElementById("sidebarToggle").addEventListener("click", () => {
         document.getElementById("sidebar").classList.toggle("open");
     });
 }
 
-// ── User search (username OR display name) ─────────────────────
+// ── User search (case-insensitive, username OR display name) ───
 async function searchUsers(term) {
     const container = document.getElementById("searchResults");
     container.innerHTML = "";
@@ -96,25 +109,25 @@ async function searchUsers(term) {
 
     const termLower = term.toLowerCase();
 
-    // Query by username prefix
+    // Search by username prefix (already lowercase)
     const qUsername = query(
         collection(db, "users"),
         where("username", ">=", termLower),
         where("username", "<=", termLower + "\uf8ff"),
-        limit(6)
+        limit(8)
     );
 
-    // Query by displayName prefix (stored as-is, try both cases)
+    // Search by searchName prefix (lowercase displayName)
     const qDisplay = query(
         collection(db, "users"),
-        where("displayName", ">=", term),
-        where("displayName", "<=", term + "\uf8ff"),
-        limit(6)
+        where("searchName", ">=", termLower),
+        where("searchName", "<=", termLower + "\uf8ff"),
+        limit(8)
     );
 
     const [snapA, snapB] = await Promise.all([getDocs(qUsername), getDocs(qDisplay)]);
 
-    // Merge results, deduplicate by uid
+    // Merge, deduplicate by uid
     const seen = new Map();
     for (const d of [...snapA.docs, ...snapB.docs]) {
         const data = d.data();
@@ -124,7 +137,7 @@ async function searchUsers(term) {
     }
 
     if (seen.size === 0) {
-        container.innerHTML = `<div class="list-empty">No users found — check the exact username</div>`;
+        container.innerHTML = `<div class="list-empty">No users found</div>`;
         return;
     }
 
@@ -433,4 +446,55 @@ async function sendMessage() {
 // ── Escape helper ──────────────────────────────────────────────
 function esc(str = "") {
     return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+// ── Delete Account ─────────────────────────────────────────────
+async function deleteAccount() {
+    const confirmBtn  = document.getElementById("deleteConfirmBtn");
+    const reauthNote  = document.getElementById("reauthNote");
+    const passInput   = document.getElementById("deletePassword");
+
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = "Deleting…";
+
+    try {
+        // 1. Delete Firestore user doc
+        await deleteDoc(doc(db, "users", currentUser.uid));
+
+        // 2. Delete the Firebase Auth account
+        await currentUser.delete();
+
+        // 3. Redirect to login
+        window.location.href = "index.html";
+
+    } catch (err) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Delete My Account";
+
+        if (err.code === "auth/requires-recent-login") {
+            // Show password re-auth field
+            reauthNote.hidden = false;
+            passInput.hidden  = false;
+            passInput.focus();
+
+            // Override button to re-auth then retry
+            confirmBtn.onclick = async () => {
+                const { EmailAuthProvider, reauthenticateWithCredential }
+                    = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+                try {
+                    const credential = EmailAuthProvider.credential(currentUser.email, passInput.value);
+                    await reauthenticateWithCredential(currentUser, credential);
+                    await deleteDoc(doc(db, "users", currentUser.uid));
+                    await currentUser.delete();
+                    window.location.href = "index.html";
+                } catch (e) {
+                    reauthNote.textContent = "Incorrect password. Try again.";
+                    reauthNote.hidden = false;
+                }
+            };
+        } else {
+            reauthNote.textContent = "Something went wrong. Please try again.";
+            reauthNote.hidden = false;
+        }
+    }
 }
