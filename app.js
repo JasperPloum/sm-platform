@@ -86,9 +86,12 @@ function bindListeners() {
     // Delete account
     document.getElementById("deleteAccountBtn").addEventListener("click", () => {
         document.getElementById("deleteModal").hidden = false;
-        document.getElementById("reauthNote").hidden  = true;
-        document.getElementById("deletePassword").hidden = false;
-        document.getElementById("deletePassword").value  = "";
+        document.getElementById("reauthNote").hidden = true;
+        document.getElementById("deletePassword").hidden = true;
+        document.getElementById("deletePassword").value = "";
+        document.getElementById("deleteConfirmBtn").textContent = "Delete My Account";
+        document.getElementById("deleteConfirmBtn").disabled = false;
+        document.getElementById("deleteConfirmBtn").onclick = deleteAccount;
     });
     document.getElementById("deleteCancelBtn").addEventListener("click", () => {
         document.getElementById("deleteModal").hidden = true;

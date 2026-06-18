@@ -487,12 +487,12 @@ body {
     z-index: 200;
     background: rgba(0,0,0,0.7);
     backdrop-filter: blur(6px);
-    display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    animation: fadeIn 0.2s ease both;
 }
+.modal-overlay[hidden] { display: none !important; }
+.modal-overlay:not([hidden]) { display: flex; }
 .modal {
     background: var(--surface);
     border: 1px solid var(--border);
